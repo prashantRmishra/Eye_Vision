@@ -3,8 +3,10 @@ package com.example.android.eye_vision;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.speech.RecognizerIntent;
+import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -12,13 +14,15 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class SpeechToText extends AppCompatActivity {
-        TextView text;
+public class SpeechToText extends AppCompatActivity implements
+        TextToSpeech.OnInitListener{
+    TextToSpeech tts;
+    TextView text;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_speech_to_text);
-
+        tts = new TextToSpeech(this, this);
         text = (TextView)findViewById(R.id.text);
     }
 
@@ -58,12 +62,47 @@ public class SpeechToText extends AppCompatActivity {
             {
                 ArrayList<String> result = i.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                 text.setText(result.get(0));
+                //tts.speak(result.get(0), TextToSpeech.QUEUE_FLUSH, null);
             }
         }
     }
 
 
+    //destroying tts after activity
+    @Override
+    public void onDestroy() {
+        // Don't forget to shutdown tts!
+        if (tts != null) {
+            tts.stop();
+            tts.shutdown();
+        }
+        super.onDestroy();
+    }
 
+//next is the function which is initiated
 
+    @Override
+    public void onInit(int status) {
 
+        if (status == TextToSpeech.SUCCESS) {
+
+            int result = tts.setLanguage(Locale.US);
+
+            if (result == TextToSpeech.LANG_MISSING_DATA
+                    || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                Log.e("TTS", "This Language is not supported");
+            } else {
+
+                //do the things like calling a function which speaks
+                // ex. :
+                tts.speak("Hi", TextToSpeech.QUEUE_FLUSH, null);
+                //tts.speak($string, TextToSpeech.QUEUE_ADD, null);
+
+            }
+
+        } else {
+            Log.e("TTS", "Initilization Failed!");
+        }
+
+    }
 }
