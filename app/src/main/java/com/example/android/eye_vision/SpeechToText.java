@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class SpeechToText extends AppCompatActivity {
@@ -48,14 +49,20 @@ public class SpeechToText extends AppCompatActivity {
 
 
 
-    }
 
 
     public void onActivityResult(int request_code, int result_code, Intent i)
     {
 
         super.onActivityResult(request_code, result_code, i);
-        switch ()
+        switch (request_code)
+        {
+            case 100: if(result_code == RESULT_OK && i != null)
+            {
+                ArrayList<String> result = i.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                text.setText(result.get())
+            }
+        }
     }
 
 
