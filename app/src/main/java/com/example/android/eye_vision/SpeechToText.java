@@ -51,6 +51,15 @@ public class SpeechToText extends AppCompatActivity {
     }
 
 
+    public void onActivityResult(int request_code, int result_code, Intent i)
+    {
+
+        super.onActivityResult(request_code, result_code, i);
+        switch ()
+    }
+
+
+
 
 
 }
